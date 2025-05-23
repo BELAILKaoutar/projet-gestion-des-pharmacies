@@ -2,33 +2,8 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
-
-variables:
-  dockerRegistryServiceConnection: 'acrConnection' # your service connection name
-  imageName: 'demo-java-app'
+  vmImage: ubuntu-latest
 
 steps:
-# Backend build
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'backend/pom.xml'
-    goals: 'package'
-  displayName: 'Build Backend (Maven)'
-
-# Frontend build
-- script: |
-    cd frontend
-    npm install
-    npm run build
-  displayName: 'Build Frontend (React)'
-
-# Build and push Docker image
-- task: Docker@2
-  inputs:
-    command: buildAndPush
-    repository: $(imageName)
-    dockerfile: 'backend/Dockerfile'
-    containerRegistry: $(dockerRegistryServiceConnection)
-    tags: |
-      latest
+- script: echo "Hello, Azure DevOps!"
+  displayName: "Test pipeline"
