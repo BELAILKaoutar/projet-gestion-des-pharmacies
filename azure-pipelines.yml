@@ -27,10 +27,19 @@ steps:
     npm run build
   displayName: 'Build React Frontend'
 
-# Step 5: Build Spring Boot backend
+# Step 5: Install JDK 17
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '17'
+    jdkArchitectureOption: 'x64'
+  displayName: 'Install JDK 17'
+
+# Step 6: Build Spring Boot backend
 - task: Maven@3
   inputs:
     mavenPomFile: 'Backend/pom.xml'
     goals: 'clean package'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.17'
     publishJUnitResults: true
   displayName: 'Build Spring Boot Backend'
