@@ -1,9 +1,59 @@
 trigger:
-- master
+  - master
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo "Hello, Azure DevOps!"
-  displayName: "Test pipeline"
+variables:
+  node_version: '18.x'
+  java_version: '17'
+  working_dir_frontend: 'frontend'
+  working_dir_backend: 'backend'
+
+stages:
+
+- stage: BuildFrontend
+  displayName: "Build React Frontend"
+  jobs:
+    - job: BuildFrontendJob
+      steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: '$(node_version)'
+          displayName: "Install Node.js"
+
+        - script: |
+            cd $(working_dir_frontend)
+            npm install
+            npm run build
+          displayName: "Build React App"
+
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '$(working_dir_frontend)/build'
+            ArtifactName: 'frontend-build'
+            publishLocation: 'Container'
+          displayName: "Publish Frontend Artifact"
+
+- stage: BuildBackend
+  displayName: "Build Spring Boot Backend"
+  jobs:
+    - job: BuildBackendJob
+      steps:
+        - task: JavaToolInstaller@0
+          inputs:
+            versionSpec: '$(java_version)'
+            jdkArchitecture: 'x64'
+          displayName: "Install JDK"
+
+        - script: |
+            cd $(working_dir_backend)
+            ./mvnw clean package
+          displayName: "Build Spring Boot App"
+
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '$(working_dir_backend)/target'
+            ArtifactName: 'backend-build'
+            publishLocation: 'Container'
+          displayName: "Publish Backend Artifact"
