@@ -30,9 +30,11 @@ steps:
 # Step 5: Install JDK 17
 - task: JavaToolInstaller@0
   inputs:
+    jdkSourceOption: 'PreInstalled'   # << obligatoire !
     versionSpec: '17'
     jdkArchitectureOption: 'x64'
   displayName: 'Install JDK 17'
+
 
 # Step 6: Build Spring Boot backend
 - task: Maven@3
